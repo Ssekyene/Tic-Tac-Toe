@@ -2,11 +2,10 @@ const GameBoard = function (rows=3, cols=3) {
     const board = [];
     function init() {
         for (let r = 0; r < rows; r++) {
-            const row = [];
+            board[r] = [];
             for (let c = 0; c < cols; c++) {
-                row.push(null);
+                board[r].push(Cell());
             }
-            board.push(row);
         }
     }
 
@@ -18,28 +17,96 @@ const GameBoard = function (rows=3, cols=3) {
     }
 
 
-    function setCell(row, col, value) {
-        if (row >= 0 && row < rows && col >= 0 && col < cols) {
-            board[row][col] = value;
-        }
-    }
-
+    // printing the board to the console for testing purposes
     function printBoard() {
-        console.log(board);
+        const boardState = board.map(row => 
+            row.map(cell => cell.getValue() === null ? '-' : cell.getValue())
+        );
+        console.log(boardState);
     }
 
 
     init();
     return {
         getBoard,
-        setCell,
         printBoard
     };
 };
 
-const GameController = function () {
-    const gameBoard = GameBoard();
-    gameBoard.printBoard();
+
+const Cell = function() {
+  let value = null;
+
+  const addToken = (playerToken) => {
+    value = playerToken;
+  }
+
+  const getValue = () => value;
+
+  return {
+    addToken,
+    getValue,
+  }
 }
 
-const game = GameController();
+
+const GameController = function (
+  playerOneName = "Player One",
+  playerTwoName = "Player Two"
+  ) {
+      const gameBoard = GameBoard();
+      const players = [
+          { 
+            name: playerOneName,
+            token: 1,
+          },
+          {
+            name: playerTwoName,
+            token: 2,
+          }
+      ];
+      let currentPlayerIndex = 0;
+
+      // For testing purposes, print the current player
+      function printCurrentPlayer() {
+          console.log(`Current Player: ${getCurrentPlayer().name}`);
+      }
+
+      // Initialize the game state for the first time in the console
+      function init() {
+          gameBoard.printBoard();
+          printCurrentPlayer();
+      }
+
+      function switchPlayer() {
+          currentPlayerIndex = 1 - currentPlayerIndex;
+      }
+
+      function getCurrentPlayer() {
+          return players[currentPlayerIndex];
+      }
+
+      function playTurn(row, col) {
+          const board = gameBoard.getBoard();
+          const cell = board[row][col];
+          if (cell.getValue() === null) {
+              cell.addToken(getCurrentPlayer().token);
+              gameBoard.printBoard();
+              switchPlayer();
+              printCurrentPlayer();
+              
+          } else {
+              console.log("Cell already occupied! Choose another cell.");
+          }
+      }
+
+      init();
+      return {
+          playTurn,
+          getCurrentPlayer,
+          switchPlayer,
+          printCurrentPlayer,
+      };
+};
+
+const game = GameController("Alice", "Bob");
