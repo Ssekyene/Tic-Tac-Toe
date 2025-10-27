@@ -1,6 +1,8 @@
 const GameBoard = function (rows=3, cols=3) {
     const board = [];
     function init() {
+        // clear any existing contents so init can be called again (reset)
+        board.length = 0;
         for (let r = 0; r < rows; r++) {
             board[r] = [];
             for (let c = 0; c < cols; c++) {
@@ -27,9 +29,15 @@ const GameBoard = function (rows=3, cols=3) {
 
 
     init();
+
+    function reset() {
+        init();
+    }
+
     return {
         getBoard,
-        printBoard
+        printBoard,
+        reset,
     };
 };
 
@@ -66,6 +74,8 @@ const GameController = function (
           }
       ];
       let currentPlayerIndex = 0;
+      let isGameOver = false;
+
 
       // For testing purposes, print the current player
       function printCurrentPlayer() {
@@ -78,6 +88,10 @@ const GameController = function (
           printCurrentPlayer();
       }
 
+      function getIsGameOver() {
+          return isGameOver;
+      }
+
       function switchPlayer() {
           currentPlayerIndex = 1 - currentPlayerIndex;
       }
@@ -87,11 +101,66 @@ const GameController = function (
       }
 
       function playTurn(row, col) {
+          if (isGameOver) {
+              console.log("Game is over. Start a new game to play again.");
+              return;
+          }
           const board = gameBoard.getBoard();
+
+          // input validation: ensure integers and within bounds
+          if (typeof row !== 'number' || typeof col !== 'number' || !Number.isInteger(row) || !Number.isInteger(col)) {
+              console.log('Invalid input: row and col must be integers.');
+              return;
+          }
+
+          if (row < 0 || row >= board.length || col < 0 || col >= board[row].length) {
+              console.log('Invalid move: out of bounds.');
+              return;
+          }
+
           const cell = board[row][col];
           if (cell.getValue() === null) {
               cell.addToken(getCurrentPlayer().token);
               gameBoard.printBoard();
+
+              // game logic to check for win/draw
+              const winningCombinations = [
+                  // Rows
+                  [[0,0], [0,1], [0,2]],
+                  [[1,0], [1,1], [1,2]],
+                  [[2,0], [2,1], [2,2]],
+                  // Columns
+                  [[0,0], [1,0], [2,0]],
+                  [[0,1], [1,1], [2,1]],
+                  [[0,2], [1,2], [2,2]],
+                  // Diagonals
+                  [[0,0], [1,1], [2,2]],
+                  [[0,2], [1,1], [2,0]],
+              ];
+
+              const currentToken = getCurrentPlayer().token;
+              let hasWon = winningCombinations.some(combination => 
+                  combination.every(([r, c]) => board[r][c].getValue() === currentToken)
+              );
+
+              if (hasWon) {
+                  console.log(`${getCurrentPlayer().name} wins!`);
+                  isGameOver = true;
+                  return;
+              }
+
+              // Check for draw
+              const isDraw = board.every(row => 
+                  row.every(cell => cell.getValue() !== null)
+              );
+
+              if (isDraw) {
+                  console.log("It's a draw!");
+                  isGameOver = true;
+                  return;
+              }
+
+
               switchPlayer();
               printCurrentPlayer();
               
@@ -100,12 +169,24 @@ const GameController = function (
           }
       }
 
+      
+      function reset() {
+          gameBoard.reset();
+          currentPlayerIndex = 0;
+          isGameOver = false;
+          console.log('Game reset.');
+          gameBoard.printBoard();
+          printCurrentPlayer();
+      }
+
       init();
       return {
           playTurn,
           getCurrentPlayer,
+          getIsGameOver,
           switchPlayer,
           printCurrentPlayer,
+          reset,
       };
 };
 
