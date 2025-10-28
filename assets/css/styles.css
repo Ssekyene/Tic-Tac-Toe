@@ -6,16 +6,23 @@
 }
 
 .ctn {
-    width: min(800px, 100%);
+    width: min(700px, 100%);
     height: 75vh;
     border: 1px solid #999;
     border-radius: 10px;
     margin: 50px auto;
 }
 
+.turn {
+    padding: 10px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
 section.play {
     width: 100%;
-    height: calc(100% - 100px);
+    height: calc(100% - 200px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,10 +39,18 @@ section.play {
 }
 
 .cell {
-  padding: 2px;
-  border: none;
-  cursor: pointer;
-  background-color: inherit;
+    padding: 2px;
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 5rem;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1;
 }
 
 .cell:nth-child(1),
@@ -54,15 +69,4 @@ section.play {
 .cell:nth-child(5),
 .cell:nth-child(6) {
     border-bottom: 4px solid #1e7c74;
-}
-
-.cell-value {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    font-size: 61px;
-    font-weight: 900;
-    text-align: center;
-    /* background-color: #ddd; */
-    font-family: 'Montserrat', sans-serif;
 }
