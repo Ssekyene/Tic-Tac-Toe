@@ -65,9 +65,14 @@ const GameController = function (
       ];
       let currentPlayerIndex = 0;
       let isGameOver = false;
+      let isDraw = false;
 
       function getIsGameOver() {
           return isGameOver;
+      }
+
+      function getIsDraw() {
+          return isDraw;
       }
 
       function switchPlayer() {
@@ -77,6 +82,7 @@ const GameController = function (
       function getCurrentPlayer() {
           return players[currentPlayerIndex];
       }
+
 
       function playTurn(row, col) {
           if (isGameOver) {
@@ -115,7 +121,7 @@ const GameController = function (
               }
 
               // Check for draw
-              const isDraw = board.every(row => 
+              isDraw = board.every(row => 
                   row.every(cell => cell.getValue() !== null)
               );
 
@@ -136,12 +142,14 @@ const GameController = function (
           gameBoard.reset();
           currentPlayerIndex = 0;
           isGameOver = false;
+          isDraw = false;
       }
 
       return {
           playTurn,
           getCurrentPlayer,
           getIsGameOver,
+          getIsDraw,
           switchPlayer,
           reset,
           getBoard : gameBoard.getBoard,
@@ -203,6 +211,14 @@ const screenController = function () {
       const col = parseInt(target.dataset.col, 10);
       game.playTurn(row, col);
       updatePlayScreen();
+      if (game.getIsGameOver()) {
+        boardDiv.removeEventListener('click', handleCellClick);
+        if (game.getIsDraw()) {
+          playerTurnDiv.textContent = `Game Over---It's a draw!`;
+        } else {
+          playerTurnDiv.textContent = `Game Over---${game.getCurrentPlayer().name} wins!`;
+        }
+      } 
     }
   }
 
