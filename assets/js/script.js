@@ -19,15 +19,6 @@ const GameBoard = function (rows=3, cols=3) {
     }
 
 
-    // printing the board to the console for testing purposes
-    function printBoard() {
-        const boardState = board.map(row => 
-            row.map(cell => cell.getValue() === null ? '-' : cell.getValue())
-        );
-        console.log(boardState);
-    }
-
-
     init();
 
     function reset() {
@@ -36,7 +27,6 @@ const GameBoard = function (rows=3, cols=3) {
 
     return {
         getBoard,
-        printBoard,
         reset,
     };
 };
@@ -66,27 +56,15 @@ const GameController = function (
       const players = [
           { 
             name: playerOneName,
-            token: 1,
+            token: 'X',
           },
           {
             name: playerTwoName,
-            token: 2,
+            token: 'O',
           }
       ];
       let currentPlayerIndex = 0;
       let isGameOver = false;
-
-
-      // For testing purposes, print the current player
-      function printCurrentPlayer() {
-          console.log(`Current Player: ${getCurrentPlayer().name}`);
-      }
-
-      // Initialize the game state for the first time in the console
-      function init() {
-          gameBoard.printBoard();
-          printCurrentPlayer();
-      }
 
       function getIsGameOver() {
           return isGameOver;
@@ -106,22 +84,10 @@ const GameController = function (
               return;
           }
           const board = gameBoard.getBoard();
-
-          // input validation: ensure integers and within bounds
-          if (typeof row !== 'number' || typeof col !== 'number' || !Number.isInteger(row) || !Number.isInteger(col)) {
-              console.log('Invalid input: row and col must be integers.');
-              return;
-          }
-
-          if (row < 0 || row >= board.length || col < 0 || col >= board[row].length) {
-              console.log('Invalid move: out of bounds.');
-              return;
-          }
-
           const cell = board[row][col];
+
           if (cell.getValue() === null) {
               cell.addToken(getCurrentPlayer().token);
-              gameBoard.printBoard();
 
               // game logic to check for win/draw
               const winningCombinations = [
@@ -144,7 +110,6 @@ const GameController = function (
               );
 
               if (hasWon) {
-                  console.log(`${getCurrentPlayer().name} wins!`);
                   isGameOver = true;
                   return;
               }
@@ -155,15 +120,12 @@ const GameController = function (
               );
 
               if (isDraw) {
-                  console.log("It's a draw!");
                   isGameOver = true;
                   return;
               }
 
 
               switchPlayer();
-              printCurrentPlayer();
-              
           } else {
               console.log("Cell already occupied! Choose another cell.");
           }
@@ -174,20 +136,83 @@ const GameController = function (
           gameBoard.reset();
           currentPlayerIndex = 0;
           isGameOver = false;
-          console.log('Game reset.');
-          gameBoard.printBoard();
-          printCurrentPlayer();
       }
 
-      init();
       return {
           playTurn,
           getCurrentPlayer,
           getIsGameOver,
           switchPlayer,
-          printCurrentPlayer,
           reset,
+          getBoard : gameBoard.getBoard,
       };
 };
 
-const game = GameController("Alice", "Bob");
+const screenController = function () {
+  const game = GameController("Alice", "Bob");
+  const playerTurnDiv = document.querySelector('.turn');
+  const boardDiv = document.querySelector('.board');
+  const restartButton = document.querySelector('.restart');
+
+
+  function init() {
+    updatePlayScreen();
+    addEventListeners();
+  }
+
+  function renderBoard(board) {
+     board.forEach((row, rIndex) => {
+      row.forEach((cell, cIndex) => {
+        const cellButton = document.createElement('button');
+        cellButton.classList.add('cell');
+        // set data attributes to identify the cell's position
+        // when playTurn is called
+        cellButton.dataset.row = rIndex;
+        cellButton.dataset.col = cIndex;
+        const cellValue = cell.getValue();
+        cellButton.textContent = cellValue === null ? '' : cellValue;
+        boardDiv.appendChild(cellButton);
+      });
+    });
+  }
+
+  function updatePlayScreen() {
+    // Clear the board
+    boardDiv.innerHTML = '';
+    // get the newest version of the board and player turn
+    const board = game.getBoard();
+    const currentPlayer = game.getCurrentPlayer();
+
+    // display the current player's turn
+    playerTurnDiv.textContent = `${currentPlayer.name}'s turn`;
+
+    // render the updated board
+    renderBoard(board);
+    boardDiv.addEventListener('click', handleCellClick);
+  }
+  
+  function addEventListeners() {
+    restartButton.addEventListener('click', handleRestartClick);
+  }
+
+  // add click listeners to the cells
+  function handleCellClick(event) {
+    const target = event.target;
+    if (target.classList.contains('cell')) {
+      const row = parseInt(target.dataset.row, 10);
+      const col = parseInt(target.dataset.col, 10);
+      game.playTurn(row, col);
+      updatePlayScreen();
+    }
+  }
+
+  function handleRestartClick(event) {
+    game.reset();
+    updatePlayScreen();
+  }
+
+  init();
+
+}
+
+screenController();
