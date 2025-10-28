@@ -160,7 +160,7 @@ const screenController = function () {
   const game = GameController("Alice", "Bob");
   const playerTurnDiv = document.querySelector('.turn');
   const boardDiv = document.querySelector('.board');
-  const restartButton = document.querySelector('.restart');
+  const restartButton = document.querySelector('#restart');
 
 
   function init() {
