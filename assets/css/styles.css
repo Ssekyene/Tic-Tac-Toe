@@ -22,7 +22,7 @@ body {
 header {
     padding: 1.1em 1em;
     border-bottom: 1px solid var(--alt-color);
-    margin-bottom: 35px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -65,7 +65,7 @@ svg {
 .ctn {
     width: min(700px, 100%);
     height: 75vh;
-    margin: 20px auto;
+    margin: 0px auto;
     display: grid;
     justify-items: center;
 }
@@ -98,15 +98,17 @@ svg {
 @media (min-width: 780px) {
    .players > div {
         position: absolute;
+        --top-offset: 27vh;
+        --edge-offset: 8vw;
    }
 
     .player-x {
-        top: 20vh;
-        left: 8vw;
+        top: var(--top-offset);
+        left: var(--edge-offset);
     }
     .player-o {
-        top: 20vh;
-        right: 8vw;
+        top: var(--top-offset);
+        right: var(--edge-offset);
     }
 }
 
@@ -142,6 +144,12 @@ svg {
     margin-bottom: 30px;
 }
 
+.scores {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--alt-color);
+}
 
 .board {
     width: 300px;
