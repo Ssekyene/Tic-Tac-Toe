@@ -52,9 +52,11 @@ const GameController = function () {
   const players = [
       { 
         token: 'X',
+        score: 0,
       },
       {
         token: 'O',
+        score: 0,
       }
   ];
   let currentPlayerIndex = 0;
@@ -84,6 +86,10 @@ const GameController = function () {
 
   function getCurrentPlayer() {
       return players[currentPlayerIndex];
+  }
+
+  function updateCurrentPlayerScore() {
+      players[currentPlayerIndex].score += 1;
   }
 
 
@@ -120,6 +126,7 @@ const GameController = function () {
 
           if (hasWon) {
               isGameOver = true;
+              updateCurrentPlayerScore();
               return;
           }
 
@@ -199,6 +206,9 @@ const screenController = function () {
   }
 
   function updatePlayScreen() {
+    // update scores
+    document.querySelector('.x-score').textContent = game.getPlayers()[0].score;
+    document.querySelector('.o-score').textContent = game.getPlayers()[1].score;
     // Clear the board
     boardDiv.innerHTML = '';
     // get the newest version of the board and player turn
@@ -242,9 +252,9 @@ const screenController = function () {
       if (game.getIsGameOver()) {
         boardDiv.removeEventListener('click', handleCellClick);
         if (game.getIsDraw()) {
-          playerTurnDiv.textContent = `Game Over---It's a draw!`;
+          playerTurnDiv.textContent = `It's a draw!`;
         } else {
-          playerTurnDiv.textContent = `Game Over---${game.getCurrentPlayer().name} wins!`;
+          playerTurnDiv.textContent = `${game.getCurrentPlayer().name} wins!`;
         }
       } 
     }
