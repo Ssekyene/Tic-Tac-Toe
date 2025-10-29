@@ -47,125 +47,139 @@ const Cell = function() {
   }
 }
 
-
-const GameController = function (
-  playerOneName = "Player One",
-  playerTwoName = "Player Two"
-  ) {
-      const gameBoard = GameBoard();
-      const players = [
-          { 
-            name: playerOneName,
-            token: 'X',
-          },
-          {
-            name: playerTwoName,
-            token: 'O',
-          }
-      ];
-      let currentPlayerIndex = 0;
-      let isGameOver = false;
-      let isDraw = false;
-
-      function getIsGameOver() {
-          return isGameOver;
+const GameController = function () {
+  const gameBoard = GameBoard();
+  const players = [
+      { 
+        token: 'X',
+      },
+      {
+        token: 'O',
       }
+  ];
+  let currentPlayerIndex = 0;
+  let isGameOver = false;
+  let isDraw = false;
 
-      function getIsDraw() {
-          return isDraw;
+  function setPlayerNames(playerOneName, playerTwoName) {
+      players[0].name = playerOneName || "Player1";
+      players[1].name = playerTwoName || "Player2";
+  }
+
+  function getPlayers() {
+    return players;
+  }
+
+  function getIsGameOver() {
+      return isGameOver;
+  }
+
+  function getIsDraw() {
+      return isDraw;
+  }
+
+  function switchPlayer() {
+      currentPlayerIndex = 1 - currentPlayerIndex;
+  }
+
+  function getCurrentPlayer() {
+      return players[currentPlayerIndex];
+  }
+
+
+  function playTurn(row, col) {
+      if (isGameOver) {
+          console.log("Game is over. Start a new game to play again.");
+          return;
       }
+      const board = gameBoard.getBoard();
+      const cell = board[row][col];
 
-      function switchPlayer() {
-          currentPlayerIndex = 1 - currentPlayerIndex;
-      }
+      if (cell.getValue() === null) {
+          cell.addToken(getCurrentPlayer().token);
 
-      function getCurrentPlayer() {
-          return players[currentPlayerIndex];
-      }
+          // game logic to check for win/draw
+          const winningCombinations = [
+              // Rows
+              [[0,0], [0,1], [0,2]],
+              [[1,0], [1,1], [1,2]],
+              [[2,0], [2,1], [2,2]],
+              // Columns
+              [[0,0], [1,0], [2,0]],
+              [[0,1], [1,1], [2,1]],
+              [[0,2], [1,2], [2,2]],
+              // Diagonals
+              [[0,0], [1,1], [2,2]],
+              [[0,2], [1,1], [2,0]],
+          ];
 
+          const currentToken = getCurrentPlayer().token;
+          let hasWon = winningCombinations.some(combination => 
+              combination.every(([r, c]) => board[r][c].getValue() === currentToken)
+          );
 
-      function playTurn(row, col) {
-          if (isGameOver) {
-              console.log("Game is over. Start a new game to play again.");
+          if (hasWon) {
+              isGameOver = true;
               return;
           }
-          const board = gameBoard.getBoard();
-          const cell = board[row][col];
 
-          if (cell.getValue() === null) {
-              cell.addToken(getCurrentPlayer().token);
+          // Check for draw
+          isDraw = board.every(row => 
+              row.every(cell => cell.getValue() !== null)
+          );
 
-              // game logic to check for win/draw
-              const winningCombinations = [
-                  // Rows
-                  [[0,0], [0,1], [0,2]],
-                  [[1,0], [1,1], [1,2]],
-                  [[2,0], [2,1], [2,2]],
-                  // Columns
-                  [[0,0], [1,0], [2,0]],
-                  [[0,1], [1,1], [2,1]],
-                  [[0,2], [1,2], [2,2]],
-                  // Diagonals
-                  [[0,0], [1,1], [2,2]],
-                  [[0,2], [1,1], [2,0]],
-              ];
-
-              const currentToken = getCurrentPlayer().token;
-              let hasWon = winningCombinations.some(combination => 
-                  combination.every(([r, c]) => board[r][c].getValue() === currentToken)
-              );
-
-              if (hasWon) {
-                  isGameOver = true;
-                  return;
-              }
-
-              // Check for draw
-              isDraw = board.every(row => 
-                  row.every(cell => cell.getValue() !== null)
-              );
-
-              if (isDraw) {
-                  isGameOver = true;
-                  return;
-              }
-
-
-              switchPlayer();
-          } else {
-              console.log("Cell already occupied! Choose another cell.");
+          if (isDraw) {
+              isGameOver = true;
+              return;
           }
-      }
 
-      
-      function reset() {
-          gameBoard.reset();
-          currentPlayerIndex = 0;
-          isGameOver = false;
-          isDraw = false;
-      }
 
-      return {
-          playTurn,
-          getCurrentPlayer,
-          getIsGameOver,
-          getIsDraw,
-          switchPlayer,
-          reset,
-          getBoard : gameBoard.getBoard,
-      };
+          switchPlayer();
+      } else {
+          console.log("Cell already occupied! Choose another cell.");
+      }
+  }
+
+  
+  function reset() {
+      gameBoard.reset();
+      currentPlayerIndex = 0;
+      isGameOver = false;
+      isDraw = false;
+  }
+
+  return {
+      playTurn,
+      setPlayerNames,
+      getPlayers,
+      getCurrentPlayer,
+      getIsGameOver,
+      getIsDraw,
+      switchPlayer,
+      reset,
+      getBoard : gameBoard.getBoard,
+  };
 };
 
 const screenController = function () {
-  const game = GameController("Alice", "Bob");
+  const game = GameController();
   const playerTurnDiv = document.querySelector('.turn');
   const boardDiv = document.querySelector('.board');
   const restartButton = document.querySelector('#restart');
 
 
   function init() {
+    setPlayerNames();
     updatePlayScreen();
     addEventListeners();
+  }
+
+  function setPlayerNames() {
+    const playerOneName = prompt("Enter Player One's name (X): ");
+    const playerTwoName = prompt("Enter Player Two's name (O): ");
+    game.setPlayerNames(playerOneName, playerTwoName);
+    window.document.querySelector("#player-x").dataset.playerName = game.getPlayers()[0].name;
+    window.document.querySelector("#player-o").dataset.playerName = game.getPlayers()[1].name;
   }
 
   function renderBoard(board) {
