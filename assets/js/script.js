@@ -207,6 +207,20 @@ const screenController = function () {
 
     // display the current player's turn
     playerTurnDiv.textContent = `${currentPlayer.name}'s turn`;
+    const currentPlayerSpan = document.querySelector('.current-player');
+
+
+    // abbreviate current player names for the small space in the turn indicator
+    let abbName;
+    if (currentPlayer.name === "Player1" || currentPlayer.name === "Player2") {
+      const firstChar = currentPlayer.name.charAt(0);
+      const lastChar = currentPlayer.name.slice(-1);
+      abbName = firstChar.concat(lastChar); // eg. "P1", "P2"
+    } else {
+      abbName = currentPlayer.name.length <= 3 ? currentPlayer.name : currentPlayer.name.slice(0,3);
+    }
+    currentPlayerSpan.dataset.currentPlayer = abbName;
+    currentPlayerSpan.style.setProperty('--offset', currentPlayer.name === game.getPlayers()[0].name ? '0px' : 'calc(100% - 42px)');
 
     // render the updated board
     renderBoard(board);
