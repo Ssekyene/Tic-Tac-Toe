@@ -68,6 +68,7 @@ svg {
     margin: 0px auto;
     display: grid;
     justify-items: center;
+    grid-auto-rows: min-content;
 }
 
 .players {
@@ -81,11 +82,12 @@ svg {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
     font-size: 10rem;
     font-weight: 100;
     color: var(--alt-color);
-    position: relative;
 }
+
 
 .players > div::after {
     content: attr(data-player-name);
@@ -194,7 +196,7 @@ svg {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /** Welcome Screen **/
@@ -239,4 +241,89 @@ svg {
 .player-mode button svg {
     width: 90%;
     fill: var(--btn-content-color);
+}
+
+
+/** Player Settings Screen **/
+.player-setting {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+
+.name-inputs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.player-name {
+    display: grid;
+    place-items: center;
+    gap: 20px;
+}
+
+.player-name label {
+    font-size: 7rem;
+    font-weight: 100;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--alt-color);
+    background-color: var(--accent-color);
+    width: 9rem;
+    height: 9rem;
+    border-radius: 100%
+}
+
+.player-name input {
+    border: none;
+    outline: none;
+    border-bottom: 2px dashed var(--accent-color);
+    padding: 4px 0;
+    background-color: inherit;
+    color: var(--secondary-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    width: 230px;
+}
+
+.player-name input:focus {
+
+}
+
+::placeholder {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    opacity: 0.7;
+    font-style: italic;
+    position: relative;
+}
+
+.nav-btns {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-btns button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--alt-color);
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, transform 0.1s;
+}
+
+.nav-btns button:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.nav-btns button:active {
+    transform: scale(0.98);
 }
