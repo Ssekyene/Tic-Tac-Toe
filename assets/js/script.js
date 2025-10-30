@@ -176,7 +176,7 @@ const screenController = function () {
 
 
   function init() {
-    setPlayerNames();
+    // setPlayerNames();
     updatePlayScreen();
     addEventListeners();
   }

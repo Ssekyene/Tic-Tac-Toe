@@ -192,3 +192,51 @@ svg {
 .cell:nth-child(6) {
     border-bottom: 4px solid var(--secondary-color);;
 }
+
+.hidden {
+    display: none;
+}
+
+/** Welcome Screen **/
+.welcome-ctn {
+    margin-top: 6vh;
+}
+
+.welcome-screen h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--accent-color);
+}
+
+.player-mode {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.player-mode button {
+    --btn-content-color: var(--alt-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--btn-content-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    background-color: inherit;
+    transition: background-color 0.3s, --btn-content-color 0.3s, transform 0.1s;
+}
+.player-mode button:hover {
+    background-color: var(--secondary-color);
+    --btn-content-color: var(--primary-color);
+}
+
+.player-mode button:active {
+    transform: scale(0.98);
+}
+
+.player-mode button svg {
+    width: 90%;
+    fill: var(--btn-content-color);
+}

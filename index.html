@@ -7,26 +7,39 @@
     <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
-    <header>
-        <div class="branding">Tic Tac Toe</div>
-        <div class="header-btn">
-            <button class="header-restart-btn restart" id="restart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>play again</title><path d="M12,4C14.1,4 16.1,4.8 17.6,6.3C20.7,9.4 20.7,14.5 17.6,17.6C15.8,19.5 13.3,20.2 10.9,19.9L11.4,17.9C13.1,18.1 14.9,17.5 16.2,16.2C18.5,13.9 18.5,10.1 16.2,7.7C15.1,6.6 13.5,6 12,6V10.6L7,5.6L12,0.6V4M6.3,17.6C3.7,15 3.3,11 5.1,7.9L6.6,9.4C5.5,11.6 5.9,14.4 7.8,16.2C8.3,16.7 8.9,17.1 9.6,17.4L9,19.4C8,19 7.1,18.4 6.3,17.6Z" /></svg></button>
-            <button class="header-player-btn player-setting"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>player-setting</title><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6M12,11A1.5,1.5 0 0,1 10.5,9.5A1.5,1.5 0 0,1 12,8A1.5,1.5 0 0,1 13.5,9.5A1.5,1.5 0 0,1 12,11Z" /></svg></button>
+    <section class="welcome-screen">
+
+        <div class="ctn welcome-ctn">
+            <h1>Tic Tac Toe</h1>
+            <div class="player-mode">
+                <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Solo</title><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>Play Solo</button>
+                <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Friends</title><path d="M16.5,12A2.5,2.5 0 0,0 19,9.5A2.5,2.5 0 0,0 16.5,7A2.5,2.5 0 0,0 14,9.5A2.5,2.5 0 0,0 16.5,12M9,11A3,3 0 0,0 12,8A3,3 0 0,0 9,5A3,3 0 0,0 6,8A3,3 0 0,0 9,11M16.5,14C14.67,14 11,14.92 11,16.75V19H22V16.75C22,14.92 18.33,14 16.5,14M9,13C6.67,13 2,14.17 2,16.5V19H9V16.75C9,15.9 9.33,14.41 11.37,13.28C10.5,13.1 9.66,13 9,13Z" /></svg>Play with a friend</button>
+            </div>
         </div>
-    </header>
-    <div class="ctn">
-        <div class="scores"><span class="x-score">0</span>&nbsp;:&nbsp;<span class="o-score">0</span></div>
-        <div class="board"></div>
-        <div class="players">
-            <div class="player-x" id="player-x" data-player-name="">X</div>
-            <div class="player-o" id="player-o" data-player-name="">O</div>
+
+    </section>
+    <section class="play-screen hidden">
+        <header>
+            <div class="branding">Tic Tac Toe</div>
+            <div class="header-btn">
+                <button class="header-restart-btn restart" id="restart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>play again</title><path d="M12,4C14.1,4 16.1,4.8 17.6,6.3C20.7,9.4 20.7,14.5 17.6,17.6C15.8,19.5 13.3,20.2 10.9,19.9L11.4,17.9C13.1,18.1 14.9,17.5 16.2,16.2C18.5,13.9 18.5,10.1 16.2,7.7C15.1,6.6 13.5,6 12,6V10.6L7,5.6L12,0.6V4M6.3,17.6C3.7,15 3.3,11 5.1,7.9L6.6,9.4C5.5,11.6 5.9,14.4 7.8,16.2C8.3,16.7 8.9,17.1 9.6,17.4L9,19.4C8,19 7.1,18.4 6.3,17.6Z" /></svg></button>
+                <button class="header-player-btn player-setting"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>player-setting</title><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6M12,11A1.5,1.5 0 0,1 10.5,9.5A1.5,1.5 0 0,1 12,8A1.5,1.5 0 0,1 13.5,9.5A1.5,1.5 0 0,1 12,11Z" /></svg></button>
+            </div>
+        </header>
+        <div class="ctn">
+            <div class="scores"><span class="x-score">0</span>&nbsp;:&nbsp;<span class="o-score">0</span></div>
+            <div class="board"></div>
+            <div class="players">
+                <div class="player-x" id="player-x" data-player-name="">X</div>
+                <div class="player-o" id="player-o" data-player-name="">O</div>
+            </div>
+            <div class="turn-indicator">
+                <span class="current-player" data-current-player=""></span>
+            </div>
+            <div class="turn"></div>
+            <div><button class="quit">Quit Game</button></div>
         </div>
-        <div class="turn-indicator">
-            <span class="current-player" data-current-player=""></span>
-        </div>
-        <div class="turn"></div>
-        <div><button class="quit">Quit Game</button></div>
-    </div>
+    </section>
     <script src="./assets/js/script.js"></script>
 </body>
 </html>
