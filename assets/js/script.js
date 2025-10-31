@@ -170,23 +170,36 @@ const GameController = function () {
 
 const screenController = function () {
   const game = GameController();
+  // cache DOM elements
   const playerTurnDiv = document.querySelector('.turn');
   const boardDiv = document.querySelector('.board');
   const restartButton = document.querySelector('#restart');
+  const freindPlayersBtn = document.querySelector('#friend-players');
+  const playerModeDiv = document.querySelector('.player-mode');
+  const playerSettingsDiv = document.querySelector('.player-settings');
+  const startBtn = document.querySelector('.start-btn');
+  const backBtn = document.querySelector('.back-btn');
+  const welcomeScreen = document.querySelector('.welcome-screen');
+  const playScreen = document.querySelector('.play-screen');
+
 
 
   function init() {
-    // setPlayerNames();
-    updatePlayScreen();
+    // // setPlayerNames();
+    // updatePlayScreen();
     addEventListeners();
   }
 
-  function setPlayerNames() {
-    const playerOneName = prompt("Enter Player One's name (X): ");
-    const playerTwoName = prompt("Enter Player Two's name (O): ");
-    game.setPlayerNames(playerOneName, playerTwoName);
-    window.document.querySelector("#player-x").dataset.playerName = game.getPlayers()[0].name;
-    window.document.querySelector("#player-o").dataset.playerName = game.getPlayers()[1].name;
+  function getPlayerNames () {
+    const player1Name = document.querySelector("#player-x-input").value;
+    const player2Name = document.querySelector("#player-o-input").value;
+    game.setPlayerNames(player1Name, player2Name);
+
+  }
+
+  function displayPlayerNames () {
+    document.querySelector("#player-x").dataset.playerName = game.getPlayers()[0].name;
+    document.querySelector("#player-o").dataset.playerName = game.getPlayers()[1].name;
   }
 
   function renderBoard(board) {
@@ -239,6 +252,9 @@ const screenController = function () {
   
   function addEventListeners() {
     restartButton.addEventListener('click', handleRestartClick);
+    freindPlayersBtn.addEventListener('click', openPlayerSettings);
+    startBtn.addEventListener('click', startGame);
+    backBtn.addEventListener('click', openPlayerMode);
   }
 
   // add click listeners to the cells
@@ -264,6 +280,26 @@ const screenController = function () {
     game.reset();
     updatePlayScreen();
   }
+
+  function changeDisplays(fromDisplay, toDisplay) {
+    fromDisplay.classList.toggle('hidden');
+    toDisplay.classList.toggle('hidden');
+  }
+
+  function openPlayerSettings(event) {
+    changeDisplays(playerModeDiv, playerSettingsDiv);
+  }
+
+  function startGame(event) {
+    getPlayerNames();
+    changeDisplays(welcomeScreen, playScreen);
+    displayPlayerNames();
+    updatePlayScreen();
+  }
+
+  function openPlayerMode(event) {
+    changeDisplays(playerSettingsDiv, playerModeDiv);
+  } 
 
   init();
 

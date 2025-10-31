@@ -32,6 +32,9 @@ button {
     cursor: pointer;
 }
 
+
+/** game play screen **/
+
 .header-btn {
     display: flex;
     gap: 10px;
@@ -41,9 +44,18 @@ button {
 .header-btn button {
     width: 40px;
     height: 40px;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 100%;
     background-color: inherit;
+    transition: border-color 0.3s, transform 0.1s;
+}
+
+.header-btn button:hover {
+    border-color: var(--alt-color);
+}
+
+.header-btn button:active {
+    transform: scale(0.98);
 }
 
 svg {
@@ -84,6 +96,7 @@ svg {
     align-items: center;
     position: relative;
     font-size: 10rem;
+    line-height: 1;
     font-weight: 100;
     color: var(--alt-color);
 }
@@ -160,6 +173,7 @@ svg {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    margin-bottom: 40px;
 }
 
 .cell {
@@ -244,8 +258,28 @@ svg {
 }
 
 
+button.quit {
+    font: 1.2rem;
+    color: var(--accent-color);
+    background-color: inherit;
+    padding: 10px 20px;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    box-shadow: 1px 1px 2px var(--accent-color);
+    transition: background-color 0.3s, color 0.3s, transform 0.1s;
+}
+
+button.quit:hover {
+    background-color: var(--accent-color);
+    color: var(--alt-color);
+}
+
+button.quit:active {
+   transform: scale(0.98);
+}
+
 /** Player Settings Screen **/
-.player-setting {
+.player-settings {
     width: 100%;
     display: grid;
     justify-items: center;
@@ -289,15 +323,14 @@ svg {
     font-size: 1.3rem;
     font-weight: 600;
     width: 230px;
+    text-align: center;
 }
 
-.player-name input:focus {
 
-}
-
-::placeholder {
+.player-name input::placeholder {
     color: var(--secondary-color);
     font-size: 1rem;
+    text-align: center;
     opacity: 0.7;
     font-style: italic;
     position: relative;
