@@ -64,8 +64,16 @@ const GameController = function () {
   let isDraw = false;
 
   function setPlayerNames(playerOneName, playerTwoName) {
-      players[0].name = playerOneName || "Player1";
-      players[1].name = playerTwoName || "Player2";
+    const p1 = playerOneName || 'Player1';
+    const p2 = playerTwoName || 'Player2';
+
+    if (p1 === p2) {
+      players[0].name = p1 + '1';
+      players[1].name = p2 + '2';
+    } else {
+      players[0].name = p1;
+      players[1].name = p2;
+    }
   }
 
   function getPlayers() {
