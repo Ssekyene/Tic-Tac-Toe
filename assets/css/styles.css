@@ -10,6 +10,9 @@
     --secondary-color: #214542;
     --accent-color: #a61c22;
     --alt-color: #dedede;
+    --success-color: #259625;
+    --x-color: #212742;
+    --o-color: #a71a30;
 }
 
 body {
@@ -83,6 +86,18 @@ svg {
     grid-auto-rows: min-content;
 }
 
+.hidden {
+    display: none !important;
+}
+
+.x-color {
+    color: var(--x-color) !important;
+}
+
+.o-color {
+    color: var(--o-color) !important;
+}
+
 .players {
     display: grid;
     width: 80%;
@@ -99,6 +114,7 @@ svg {
     line-height: 1;
     font-weight: 100;
     color: var(--alt-color);
+    user-select: none;
 }
 
 
@@ -107,7 +123,7 @@ svg {
     font-size: 1.5rem;
     text-align: center;
     font-weight: 900;
-    color: var(--accent-color);
+    color: var(--alt-color);
     position: absolute;
 }
 
@@ -131,12 +147,14 @@ svg {
 .current-player {
     --border-radius: 10px;
     /* --offset: calc(100% - 42px); */
-    --offset: 0px; 
+    --offset: 0px;
+    --switch-bg: var(--x-color);
     display: inline-block;
     width: 90px;
     height: 25px;
     border: 1px solid var(--accent-color);
     border-radius: var(--border-radius);
+    margin-bottom: 40px;
     position: relative;
 }
 
@@ -147,7 +165,7 @@ svg {
     border-radius: var(--border-radius);
     color: var(--alt-color);
     font-size: 0.9rem;
-    background-color: var(--accent-color);
+    background-color: var(--switch-bg);
     padding: 1px 0.7em;
     position: absolute;
     left: var(--offset);
@@ -184,9 +202,9 @@ svg {
     display: flex;
     justify-content: center;
     align-items: center;
-
     font-size: 5rem;
     font-weight: 500;
+    color: #003652;
     font-family: 'Montserrat', sans-serif;
     line-height: 1;
 }
@@ -209,9 +227,97 @@ svg {
     border-bottom: 4px solid var(--secondary-color);;
 }
 
-.hidden {
-    display: none !important;
+.result-modal:open {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1,1);
 }
+
+.result-modal {
+    width: clamp(300px, 42%, 405px);
+    height: 20vh;
+    padding: 10px;
+    border: none;
+    background-color: var(--alt-color);
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px var(--secondary-color);
+    display: grid;
+    place-items: center;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: scale(0);
+    opacity: 0;
+    transition:
+    opacity 0.7s ease-out,
+    transform 0.7s ease-out,
+    overlay 0.7s ease-out allow-discrete,
+    display 0.7s ease-out allow-discrete;
+}
+
+
+/* must be after the default modal open state styles in order to take effect */
+@starting-style {
+    .result-modal:open {
+        opacity: 0;
+        transform: scaleY(0,0);
+    }
+}
+
+
+
+
+/**override the grid display which prevents the modal from hidding when closed**/
+.result-modal:not([open]) {
+    display: none;
+}
+
+.result-modal::backdrop{
+    background-color: transparent;
+    transition:
+    display 0.7s allow-discrete,
+    overlay 0.7s allow-discrete,
+    background-color 0.7s;
+}
+
+.result-modal:open::backdrop {
+    background-color: rgba(0,0,0,0.4);
+}
+
+@starting-style {
+    .result-modal:open::backdrop {
+        background-color: transparent;
+    }
+}
+
+button.close {
+    padding: 4px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    color: #444;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: inherit;
+}
+
+button.close:focus {
+    outline: 1px solid var(--secondary-color);
+}
+
+
+button.close:hover {
+    background-color: #ccc;
+}
+
+.results {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+
 
 /** Welcome Screen **/
 .welcome-ctn {
@@ -307,11 +413,12 @@ button.quit:active {
     align-items: center;
     justify-content: center;
     color: var(--alt-color);
-    background-color: var(--accent-color);
+    background-color: #226861;
     width: 9rem;
     height: 9rem;
     border-radius: 100%
 }
+
 
 .player-name input {
     border: none;

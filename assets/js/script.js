@@ -92,6 +92,10 @@ const GameController = function () {
       players[currentPlayerIndex].score += 1;
   }
 
+  function resetScores() {
+    players.forEach((player) => {player.score = 0});
+  }
+
 
   function playTurn(row, col) {
       if (isGameOver) {
@@ -148,7 +152,7 @@ const GameController = function () {
   }
 
   
-  function reset() {
+  function resetBoard() {
       gameBoard.reset();
       currentPlayerIndex = 0;
       isGameOver = false;
@@ -163,7 +167,8 @@ const GameController = function () {
       getIsGameOver,
       getIsDraw,
       switchPlayer,
-      reset,
+      resetBoard,
+      resetScores,
       getBoard : gameBoard.getBoard,
   };
 };
@@ -171,18 +176,18 @@ const GameController = function () {
 const screenController = function () {
   const game = GameController();
   // cache DOM elements
-  const playerTurnDiv = document.querySelector('.turn');
   const boardDiv = document.querySelector('.board');
-  const restartButton = document.querySelector('#restart');
+  const restartBtn = document.querySelector('#restart');
   const freindPlayersBtn = document.querySelector('#friend-players');
   const playerModeDiv = document.querySelector('.player-mode');
   const playerSettingsDiv = document.querySelector('.player-settings');
   const startBtn = document.querySelector('.start-btn');
   const backBtn = document.querySelector('.back-btn');
+  const quitBtn = document.querySelector('button.quit');
   const welcomeScreen = document.querySelector('.welcome-screen');
   const playScreen = document.querySelector('.play-screen');
-
-
+  const resModal = document.querySelector('.result-modal');
+  
 
   function init() {
     // // setPlayerNames();
@@ -229,7 +234,6 @@ const screenController = function () {
     const currentPlayer = game.getCurrentPlayer();
 
     // display the current player's turn
-    playerTurnDiv.textContent = `${currentPlayer.name}'s turn`;
     const currentPlayerSpan = document.querySelector('.current-player');
 
 
@@ -244,17 +248,21 @@ const screenController = function () {
     }
     currentPlayerSpan.dataset.currentPlayer = abbName;
     currentPlayerSpan.style.setProperty('--offset', currentPlayer.name === game.getPlayers()[0].name ? '0px' : 'calc(100% - 42px)');
+    currentPlayerSpan.style.setProperty('--switch-bg', currentPlayer.name === game.getPlayers()[0].name ? 'var(--x-color)' : 'var(--o-color)');
 
     // render the updated board
     renderBoard(board);
     boardDiv.addEventListener('click', handleCellClick);
   }
   
+  // register all event handlers
   function addEventListeners() {
-    restartButton.addEventListener('click', handleRestartClick);
+    restartBtn.addEventListener('click', handleRestartClick);
+    quitBtn.addEventListener('click', quitGame);
     freindPlayersBtn.addEventListener('click', openPlayerSettings);
     startBtn.addEventListener('click', startGame);
     backBtn.addEventListener('click', openPlayerMode);
+    resModal.querySelector('.close').addEventListener('click', closeResultModal);
   }
 
   // add click listeners to the cells
@@ -267,23 +275,36 @@ const screenController = function () {
       updatePlayScreen();
       if (game.getIsGameOver()) {
         boardDiv.removeEventListener('click', handleCellClick);
+        resModal.showModal();
+        const resultDiv = resModal.querySelector('.results');
         if (game.getIsDraw()) {
-          playerTurnDiv.textContent = `It's a draw!`;
+          resultDiv.textContent = "It's a draw!";
         } else {
-          playerTurnDiv.textContent = `${game.getCurrentPlayer().name} wins!`;
+          resultDiv.textContent = `${game.getCurrentPlayer().name} wins!`
         }
       } 
     }
   }
 
   function handleRestartClick(event) {
-    game.reset();
+    game.resetBoard();
     updatePlayScreen();
   }
 
+  function displayPlayerModeDiv() {
+    changeDisplays(playScreen, welcomeScreen);
+    changeDisplays(playerSettingsDiv, playerModeDiv);
+  }
+
+  function quitGame(event) {
+    game.resetBoard();
+    game.resetScores();
+    displayPlayerModeDiv();
+  }
+
   function changeDisplays(fromDisplay, toDisplay) {
-    fromDisplay.classList.toggle('hidden');
-    toDisplay.classList.toggle('hidden');
+    fromDisplay.classList.add('hidden')
+    toDisplay.classList.remove('hidden');
   }
 
   function openPlayerSettings(event) {
@@ -300,6 +321,10 @@ const screenController = function () {
   function openPlayerMode(event) {
     changeDisplays(playerSettingsDiv, playerModeDiv);
   } 
+
+  function closeResultModal(event) {
+    resModal.close()
+  }
 
   init();
 
