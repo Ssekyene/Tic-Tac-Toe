@@ -196,9 +196,12 @@ const screenController = function () {
   }
 
   function getPlayerNames () {
-    const player1Name = document.querySelector("#player-x-input").value;
-    const player2Name = document.querySelector("#player-o-input").value;
-    game.setPlayerNames(player1Name, player2Name);
+    const xInput = document.querySelector("#player-x-input");
+    const oInput = document.querySelector("#player-o-input");
+    game.setPlayerNames(xInput.value, oInput.value);
+    // clear input fields
+    xInput.value = '';
+    oInput.value = '';
 
   }
 
@@ -247,6 +250,8 @@ const screenController = function () {
       abbName = currentPlayer.name.length <= 3 ? currentPlayer.name : currentPlayer.name.slice(0,3);
     }
     currentPlayerSpan.dataset.currentPlayer = abbName;
+
+    // toggle turn indicator
     currentPlayerSpan.style.setProperty('--offset', currentPlayer.name === game.getPlayers()[0].name ? '0px' : 'calc(100% - 42px)');
     currentPlayerSpan.style.setProperty('--switch-bg', currentPlayer.name === game.getPlayers()[0].name ? 'var(--x-color)' : 'var(--o-color)');
 
