@@ -353,6 +353,10 @@ button.close:hover {
     background-color: inherit;
     transition: background-color 0.3s, --btn-content-color 0.3s, transform 0.1s;
 }
+
+#solo-player {
+    cursor: not-allowed;
+}
 .player-mode button:hover {
     background-color: var(--secondary-color);
     --btn-content-color: var(--primary-color);
