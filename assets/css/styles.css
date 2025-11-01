@@ -66,7 +66,7 @@ svg {
     height: auto;
 }
 
-.restart svg, .player-setting svg {
+.header-btn svg {
     fill: var(--accent-color);
 }
 
@@ -114,6 +114,7 @@ svg {
     line-height: 1;
     font-weight: 100;
     color: var(--alt-color);
+    opacity: 0.8;
     user-select: none;
 }
 
@@ -169,6 +170,7 @@ svg {
     padding: 1px 0.7em;
     position: absolute;
     left: var(--offset);
+    transition: left 0.2s;
 }
 
 .turn {
@@ -183,6 +185,7 @@ svg {
     font-weight: 700;
     margin-bottom: 15px;
     color: var(--alt-color);
+    user-select: none;
 }
 
 .board {
@@ -300,6 +303,7 @@ button.close {
     right: 10px;
     top: 10px;
     background-color: inherit;
+    user-select: none;
 }
 
 button.close:focus {
@@ -416,7 +420,8 @@ button.quit:active {
     background-color: #226861;
     width: 9rem;
     height: 9rem;
-    border-radius: 100%
+    border-radius: 100%;
+    user-select: none;
 }
 
 

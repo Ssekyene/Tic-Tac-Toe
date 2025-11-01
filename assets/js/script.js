@@ -162,7 +162,6 @@ const GameController = function () {
   
   function resetBoard() {
       gameBoard.reset();
-      currentPlayerIndex = 0;
       isGameOver = false;
       isDraw = false;
   }
@@ -185,7 +184,8 @@ const screenController = function () {
   const game = GameController();
   // cache DOM elements
   const boardDiv = document.querySelector('.board');
-  const restartBtn = document.querySelector('#restart');
+  const resetBtn = document.querySelector('#restart');
+  const swapFirstPlayerBtn = document.querySelector('#swap');
   const freindPlayersBtn = document.querySelector('#friend-players');
   const playerModeDiv = document.querySelector('.player-mode');
   const playerSettingsDiv = document.querySelector('.player-settings');
@@ -229,6 +229,14 @@ const screenController = function () {
         cellButton.dataset.col = cIndex;
         const cellValue = cell.getValue();
         cellButton.textContent = cellValue === null ? '' : cellValue;
+        // apply respective player token colors
+        if(cellValue) {
+          if(cellValue === 'X') {
+            cellButton.classList.add('x-color');
+          } else {
+            cellButton.classList.add('o-color');
+          }
+        }
         boardDiv.appendChild(cellButton);
       });
     });
@@ -270,7 +278,8 @@ const screenController = function () {
   
   // register all event handlers
   function addEventListeners() {
-    restartBtn.addEventListener('click', handleRestartClick);
+    resetBtn.addEventListener('click', resetBoard);
+    swapFirstPlayerBtn.addEventListener('click', swapFirstPlayer);
     quitBtn.addEventListener('click', quitGame);
     freindPlayersBtn.addEventListener('click', openPlayerSettings);
     startBtn.addEventListener('click', startGame);
@@ -299,8 +308,14 @@ const screenController = function () {
     }
   }
 
-  function handleRestartClick(event) {
+  function resetBoard(event) {
     game.resetBoard();
+    updatePlayScreen();
+  }
+  
+  function swapFirstPlayer(event) {
+    game.resetBoard();
+    game.switchPlayer();
     updatePlayScreen();
   }
 
