@@ -24,10 +24,12 @@ const GameBoard = function (rows=3, cols=3) {
         return board;
     }
 
-    // will be used to print the board in the console for
-    // testing purposes
+    // printing the board to the console for testing purposes
     function printBoard() {
-      
+        const boardState = board.map(row => 
+            row.map(cell => cell.getValue() === null ? '-' : cell.getValue())
+        );
+        console.log(boardState);
     }
 
 
@@ -40,6 +42,7 @@ const GameBoard = function (rows=3, cols=3) {
     return {
         getBoard,
         reset,
+        printBoard,
     };
 };
 
