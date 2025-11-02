@@ -24,6 +24,12 @@ const GameBoard = function (rows=3, cols=3) {
         return board;
     }
 
+    // will be used to print the board in the console for
+    // testing purposes
+    function printBoard() {
+      
+    }
+
 
     init();
 
@@ -57,6 +63,11 @@ const Cell = function() {
   }
 }
 
+const Player = (name, token, score = 0, isComputer = false)  => {
+  return {name, token, score, isComputer};
+}
+
+
 /**
  * Module responsible for the game play logic through accessing
  * the game board
@@ -64,30 +75,44 @@ const Cell = function() {
  */
 const GameController = function () {
   const gameBoard = GameBoard();
-  const players = [
-      { 
-        token: 'X',
-        score: 0,
-      },
-      {
-        token: 'O',
-        score: 0,
-      }
-  ];
+  const player1 = Player('Player1', 'X');
+  const player2 = Player('Player2', 'O');
+
+  const players = [player1, player2];
+  // const players = [
+  //     { 
+  //       token: 'X',
+  //       score: 0,
+  //     },
+  //     {
+  //       token: 'O',
+  //       score: 0,
+  //     }
+  // ];
   let currentPlayerIndex = 0;
   let isGameOver = false;
   let isDraw = false;
 
-  function setPlayerNames(playerOneName, playerTwoName) {
-    const p1 = playerOneName || 'Player1';
-    const p2 = playerTwoName || 'Player2';
-
-    if (p1 === p2) {
-      players[0].name = p1 + '1';
-      players[1].name = p2 + '2';
+  function setPlayerNames(player1Name, player2Name) {
+    // parse for both when both player names are provided
+    if (player1Name && player2Name) {
+      // append a number on the player names if they are the same
+      if (player1Name === player2Name) {
+        players[0].name = player1Name + '1';
+        players[1].name = player2Name + '2';
+      } else {
+        players[0].name = player1Name;
+        players[1].name = player2Name;
+      }
+    } else if(player1Name || player2Name) {
+      // only set the provided player name from its default
+      if (player1Name) {
+        players[0].name = player1Name;
+      } else {
+        players[1].name = player2Name;
+      }
     } else {
-      players[0].name = p1;
-      players[1].name = p2;
+      // do nothing
     }
   }
 
@@ -119,10 +144,24 @@ const GameController = function () {
     players.forEach((player) => {player.score = 0});
   }
 
+  function computerMove() {
+    const board = gameBoard.getBoard();
+    // get empty cell positions
+    const emptyPositions = [];
+    board.forEach((row, rIdx) => {
+      row.forEach((cell, cIdx) => {
+        if (cell.getValue === null) {
+          emptyPositions.push([rIdx, cIdx]);
+        }
+      });
+    });
+   console.log(emptyPositions);
+  }
 
-  function playTurn(row, col) {
+
+  function playRound(row, col) {
       if (isGameOver) {
-          console.log("Game is over. Start a new game to play again.");
+          console.log("Game is over. Start a new round to play again.");
           return;
       }
       const board = gameBoard.getBoard();
@@ -167,8 +206,12 @@ const GameController = function () {
               return;
           }
 
-
           switchPlayer();
+
+          if (getCurrentPlayer().isComputer) {
+            computerMove();
+          }
+
       } else {
           console.log("Cell already occupied! Choose another cell.");
       }
@@ -182,7 +225,7 @@ const GameController = function () {
   }
 
   return {
-      playTurn,
+      playRound,
       setPlayerNames,
       getPlayers,
       getCurrentPlayer,
@@ -241,7 +284,7 @@ const screenController = function () {
         const cellButton = document.createElement('button');
         cellButton.classList.add('cell');
         // set data attributes to identify the cell's position
-        // when playTurn is called
+        // when playRound is called
         cellButton.dataset.row = rIndex;
         cellButton.dataset.col = cIndex;
         const cellValue = cell.getValue();
@@ -309,7 +352,7 @@ const screenController = function () {
     if (target.classList.contains('cell')) {
       const row = parseInt(target.dataset.row, 10);
       const col = parseInt(target.dataset.col, 10);
-      game.playTurn(row, col);
+      game.playRound(row, col);
       updatePlayScreen();
       if (game.getIsGameOver()) {
         boardDiv.removeEventListener('click', handleCellClick);
