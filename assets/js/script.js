@@ -93,7 +93,7 @@ const GameController = function () {
   //     }
   // ];
   let currentPlayerIndex = 0;
-  let isGameOver = false;
+  let isRoundOver = false;
   let isDraw = false;
 
   function setPlayerNames(player1Name, player2Name) {
@@ -123,8 +123,8 @@ const GameController = function () {
     return players;
   }
 
-  function getIsGameOver() {
-      return isGameOver;
+  function getisRoundOver() {
+      return isRoundOver;
   }
 
   function getIsDraw() {
@@ -147,23 +147,30 @@ const GameController = function () {
     players.forEach((player) => {player.score = 0});
   }
 
+  function juniorComputerMoves(emptyPositions) {
+    const randomPosition = Math.floor(Math.random() * emptyPositions.length);
+    return emptyPositions[randomPosition]; // row and col 
+  }
+
   function computerMove() {
     const board = gameBoard.getBoard();
     // get empty cell positions
     const emptyPositions = [];
     board.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
-        if (cell.getValue === null) {
+        if (cell.getValue() === null) {
           emptyPositions.push([rIdx, cIdx]);
         }
       });
     });
-   console.log(emptyPositions);
+
+    const [row, col] = juniorComputerMoves(emptyPositions);
+    playRound(row, col);    
   }
 
 
   function playRound(row, col) {
-      if (isGameOver) {
+      if (isRoundOver) {
           console.log("Game is over. Start a new round to play again.");
           return;
       }
@@ -194,7 +201,7 @@ const GameController = function () {
           );
 
           if (hasWon) {
-              isGameOver = true;
+              isRoundOver = true;
               updateCurrentPlayerScore();
               return;
           }
@@ -205,7 +212,7 @@ const GameController = function () {
           );
 
           if (isDraw) {
-              isGameOver = true;
+              isRoundOver = true;
               return;
           }
 
@@ -223,7 +230,7 @@ const GameController = function () {
   
   function resetBoard() {
       gameBoard.reset();
-      isGameOver = false;
+      isRoundOver = false;
       isDraw = false;
   }
 
@@ -232,12 +239,13 @@ const GameController = function () {
       setPlayerNames,
       getPlayers,
       getCurrentPlayer,
-      getIsGameOver,
+      getisRoundOver,
       getIsDraw,
       switchPlayer,
       resetBoard,
       resetScores,
       getBoard : gameBoard.getBoard,
+      printBoard : gameBoard.printBoard,
   };
 };
 
@@ -357,7 +365,7 @@ const screenController = function () {
       const col = parseInt(target.dataset.col, 10);
       game.playRound(row, col);
       updatePlayScreen();
-      if (game.getIsGameOver()) {
+      if (game.getisRoundOver()) {
         boardDiv.removeEventListener('click', handleCellClick);
         resModal.showModal();
         const resultDiv = resModal.querySelector('.results');
