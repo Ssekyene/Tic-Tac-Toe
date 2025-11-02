@@ -9,6 +9,8 @@
 - [x] Implement Two player versus play mode
 - [ ] Add more smooth animations
 - [ ] Apply suitable fonts and styling for the game
+- [ ] Plug in game audio/music
+- [ ] Improve small screen layout
 
 ## Features
 - Two Player versus game mode
