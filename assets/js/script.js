@@ -1,3 +1,9 @@
+/**
+ * Module responsible for all the game board logic
+ * @param {number} rows - Number of rows
+ * @param {number} cols - Number of cols
+ * @returns {object} Game board methods
+ */
 const GameBoard = function (rows=3, cols=3) {
     const board = [];
     function init() {
@@ -31,7 +37,11 @@ const GameBoard = function (rows=3, cols=3) {
     };
 };
 
-
+/**
+ * Module responsible creating game board cells
+ * ie cell factory
+ * @returns {object} Cell methods
+ */
 const Cell = function() {
   let value = null;
 
@@ -47,6 +57,11 @@ const Cell = function() {
   }
 }
 
+/**
+ * Module responsible for the game play logic through accessing
+ * the game board
+ * @returns {object} Game control methods
+ */
 const GameController = function () {
   const gameBoard = GameBoard();
   const players = [
@@ -180,6 +195,10 @@ const GameController = function () {
   };
 };
 
+/**
+ * Module which provides an interface between the
+ * DOM elements and the GameController (game logic)
+ */
 const screenController = function () {
   const game = GameController();
   // cache DOM elements
@@ -198,8 +217,6 @@ const screenController = function () {
   
 
   function init() {
-    // // setPlayerNames();
-    // updatePlayScreen();
     addEventListeners();
   }
 
@@ -254,7 +271,6 @@ const screenController = function () {
 
     // display the current player's turn
     const currentPlayerSpan = document.querySelector('.current-player');
-
 
     // abbreviate current player names for the small space in the turn indicator
     let abbName;
