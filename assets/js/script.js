@@ -80,18 +80,7 @@ const GameController = function () {
   const gameBoard = GameBoard();
   const player1 = Player('Player1', 'X');
   const player2 = Player('Player2', 'O');
-
   const players = [player1, player2];
-  // const players = [
-  //     { 
-  //       token: 'X',
-  //       score: 0,
-  //     },
-  //     {
-  //       token: 'O',
-  //       score: 0,
-  //     }
-  // ];
   let currentPlayerIndex = 0;
   let isRoundOver = false;
   let isDraw = false;
@@ -148,13 +137,65 @@ const GameController = function () {
   }
 
   function juniorComputerMoves(emptyPositions) {
-    const randomPosition = Math.floor(Math.random() * emptyPositions.length);
-    return emptyPositions[randomPosition]; // row and col 
+    // generate a random index for empty position 2D arr ie [[r0,c0], [r0,c2], ...]
+    const randPos = Math.floor(Math.random() * emptyPositions.length);
+    return emptyPositions[randPos]; // row and col 
+  }
+
+
+  // Senior computer: tries to win or block, otherwise random
+  function seniorComputerMoves(board, emptyPositions, computerToken, humanToken) {
+    // 1. Try winning move
+    for (const [r, c] of emptyPositions) {
+      board[r][c].temp = computerToken;
+      if (checkTempWin(board, computerToken)) {
+        board[r][c].temp = null;
+        return [r, c];
+      }
+      board[r][c].temp = null;
+    }
+
+    // 2. Block human win
+    for (const [r, c] of emptyPositions) {
+      board[r][c].temp = humanToken;
+      if (checkTempWin(board, humanToken)) {
+        board[r][c].temp = null;
+        return [r, c];
+      }
+      board[r][c].temp = null;
+    }
+
+    // 3. Otherwise pick random
+    return juniorComputerMoves(emptyPositions);
+    }
+
+  // Helper: simulate win check on temporary values
+  function checkTempWin(board, token) {
+    return WINNING_COMBO.some(combo =>
+      combo.every(([r, c]) => board[r][c].temp === token || board[r][c].getValue() === token)
+    );
+  }
+
+  let compPlayerLevel = "junior"; // default
+
+  // Helper: keeps computer level state through closure
+  function getCompPlayerLevel() {
+    return compPlayerLevel;
+  }
+
+  // returns an object for computer difficulty configurations
+  function computer() {
+    return {
+      level: getCompPlayerLevel(),
+      play: computerMove,
+      setJunior() {compPlayerLevel = "junior"},
+      setSenior() {compPlayerLevel = "senior"}
+    }
   }
 
   function computerMove() {
     const board = gameBoard.getBoard();
-    // get empty cell positions
+    // get a 2D array of empty cell positions eg [[0,0],[1,1],[2,2]]
     const emptyPositions = [];
     board.forEach((row, rIdx) => {
       row.forEach((cell, cIdx) => {
@@ -164,9 +205,33 @@ const GameController = function () {
       });
     });
 
-    const [row, col] = juniorComputerMoves(emptyPositions);
+    let row, col;
+
+    if (computer().level === "senior") {
+      const computerToken = getCurrentPlayer().token;
+      const humanToken = computerToken === "X" ? "O" : "X";
+      [row, col] = seniorComputerMoves(board, emptyPositions, computerToken, humanToken);
+    } else {
+      [row, col] = juniorComputerMoves(emptyPositions);
+    }
+
     playRound(row, col);    
   }
+
+  // game logic to check for win/draw
+  const WINNING_COMBO = [
+      // Rows
+      [[0,0], [0,1], [0,2]],
+      [[1,0], [1,1], [1,2]],
+      [[2,0], [2,1], [2,2]],
+      // Columns
+      [[0,0], [1,0], [2,0]],
+      [[0,1], [1,1], [2,1]],
+      [[0,2], [1,2], [2,2]],
+      // Diagonals
+      [[0,0], [1,1], [2,2]],
+      [[0,2], [1,1], [2,0]],
+  ];
 
 
   function playRound(row, col) {
@@ -180,23 +245,9 @@ const GameController = function () {
       if (cell.getValue() === null) {
           cell.addToken(getCurrentPlayer().token);
 
-          // game logic to check for win/draw
-          const winningCombinations = [
-              // Rows
-              [[0,0], [0,1], [0,2]],
-              [[1,0], [1,1], [1,2]],
-              [[2,0], [2,1], [2,2]],
-              // Columns
-              [[0,0], [1,0], [2,0]],
-              [[0,1], [1,1], [2,1]],
-              [[0,2], [1,2], [2,2]],
-              // Diagonals
-              [[0,0], [1,1], [2,2]],
-              [[0,2], [1,1], [2,0]],
-          ];
-
           const currentToken = getCurrentPlayer().token;
-          let hasWon = winningCombinations.some(combination => 
+
+          let hasWon = WINNING_COMBO.some(combination => 
               combination.every(([r, c]) => board[r][c].getValue() === currentToken)
           );
 
@@ -244,6 +295,7 @@ const GameController = function () {
       switchPlayer,
       resetBoard,
       resetScores,
+      computer,
       getBoard : gameBoard.getBoard,
       printBoard : gameBoard.printBoard,
   };
