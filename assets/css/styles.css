@@ -354,9 +354,7 @@ button.close:hover {
     transition: background-color 0.3s, --btn-content-color 0.3s, transform 0.1s;
 }
 
-#solo-player {
-    cursor: not-allowed;
-}
+
 .player-mode button:hover {
     background-color: var(--secondary-color);
     --btn-content-color: var(--primary-color);
@@ -475,4 +473,78 @@ button.quit:active {
 
 .nav-btns button:active {
     transform: scale(0.98);
+}
+
+
+/* solo player mode styles*/
+
+.level-select-label {
+    margin-bottom: 1em;
+}
+
+.form-levels {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+
+select.levels {
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    border-bottom: 2px solid #203647;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #203647;
+    padding: 0.3em;
+    width: 110px;
+    cursor: pointer;
+    background-color: var(--alt-color);
+}
+
+.solo-player-mode {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+
+
+.player-token {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-token {
+    width: min(30%, 15em);
+    /* height: 2.5em; */
+    margin: 1em 1em 1em 1em;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #e9e3e3;
+    font-size: 1.3rem;
+    font-weight: 700;
+    box-shadow: 1px 1px 3px #444343;
+    background-color: var(--alt-color);
+}
+
+.btn-token:hover, .btn-token:focus {
+    border-color: #554a4a;
+}
+
+.btn-x {
+    color: var(--x-color);
+}
+
+.btn-o {
+    color: var(--o-color);
+}
+
+.btn-selected {
+    border-color: #554a4a;
+}
+
+.solo-player {
+    margin-bottom: 2em;
 }

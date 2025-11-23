@@ -11,13 +11,19 @@
 
         <div class="ctn welcome-ctn">
             <h1>Tic Tac Toe</h1>
-            <div class="player-mode">
-                <button id="solo-player" class="player-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Solo</title><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>Play Solo</button>
-                <button id="friend-players" class="player-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Friends</title><path d="M16.5,12A2.5,2.5 0 0,0 19,9.5A2.5,2.5 0 0,0 16.5,7A2.5,2.5 0 0,0 14,9.5A2.5,2.5 0 0,0 16.5,12M9,11A3,3 0 0,0 12,8A3,3 0 0,0 9,5A3,3 0 0,0 6,8A3,3 0 0,0 9,11M16.5,14C14.67,14 11,14.92 11,16.75V19H22V16.75C22,14.92 18.33,14 16.5,14M9,13C6.67,13 2,14.17 2,16.5V19H9V16.75C9,15.9 9.33,14.41 11.37,13.28C10.5,13.1 9.66,13 9,13Z" /></svg>Play with a friend</button>
+            <div class="player-mode hidden">
+                <button id="solo-player" class="player-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Solo</title><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>
+                    Play Solo
+                </button>
+                <button id="friend-players" class="player-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Friends</title><path d="M16.5,12A2.5,2.5 0 0,0 19,9.5A2.5,2.5 0 0,0 16.5,7A2.5,2.5 0 0,0 14,9.5A2.5,2.5 0 0,0 16.5,12M9,11A3,3 0 0,0 12,8A3,3 0 0,0 9,5A3,3 0 0,0 6,8A3,3 0 0,0 9,11M16.5,14C14.67,14 11,14.92 11,16.75V19H22V16.75C22,14.92 18.33,14 16.5,14M9,13C6.67,13 2,14.17 2,16.5V19H9V16.75C9,15.9 9.33,14.41 11.37,13.28C10.5,13.1 9.66,13 9,13Z" /></svg>
+                    Play with a friend
+                </button>
             </div>
 
-            <div class="player-settings hidden">
-                <section class="name-inputs">
+            <div class="player-settings">
+                <section class="name-inputs hidden" id="friend-player-mode">
                     <div class="player-name player-x-name">
                         <label for="player-x-input" class="x-color">X</label>
                         <input type="text" id="player-x-input" placeholder="Player1 Name" maxlength="14" spellcheck="false">
@@ -25,6 +31,24 @@
                     <div class="player-name player-o-name">
                         <label for="player-o-input" class="o-color">O</label>
                         <input type="text" id="player-o-input" placeholder="Player2 Name" maxlength="14" spellcheck="false">
+                    </div>
+                </section>
+
+                <section id="solo-player-mode" class="solo-player-mode">
+                    <p class="level-select-label" role="label">Select Computer Player:</p>
+                    <form action="" class="form-levels">
+                        <select name="levels" id="" class="levels">
+                            <option value="junior">Junior</option>
+                            <option value="senior">Senior</option>
+                        </select>
+                    </form>
+                    <p>Choose token:</p>
+                    <div class="player-token">
+                        <button class="btn-token btn-x btn-selected">X</button>
+                        <button class="btn-token btn-o">O</button>
+                    </div>
+                    <div class="solo-player player-name">
+                        <input type="text" id="player-name" placeholder="Enter your Name" maxlength="14" spellcheck="false">
                     </div>
                 </section>
 
