@@ -369,6 +369,8 @@ const screenController = function () {
   const xTokenBtn = document.querySelector('#x-token');
   const oTokenBtn = document.querySelector('#o-token');
   const playerNameInput = document.querySelector('#player-name-input');
+  const xInput = document.querySelector("#player-x-input");
+  const oInput = document.querySelector("#player-o-input");
   
 
   function init() {
@@ -381,8 +383,6 @@ const screenController = function () {
     // for human vs computer
     if (players[0].isComputer || players[1].isComputer) {
       const humanName = playerNameInput.value || 'Human';
-      // clear the input field after use
-      playerNameInput.value = '';
       if (players[0].isComputer) {
         xName = 'Bot';
         oName = humanName;
@@ -399,17 +399,18 @@ const screenController = function () {
       }
     
     } else {
-      const xInput = document.querySelector("#player-x-input");
-      const oInput = document.querySelector("#player-o-input");
       xName = xInput.value;
       oName = oInput.value;
-      // clear input fields
-      xInput.value = '';
-      oInput.value = '';
     }
     
     game.setPlayerNames(xName, oName);
-
+    
+  }
+  
+  function clearInputFields () {
+    playerNameInput.value = '';
+    xInput.value = '';
+    oInput.value = '';
   }
 
   function displayPlayerNames () {
@@ -593,13 +594,18 @@ const screenController = function () {
 
   function startGame(event) {
     getPlayerNames();
+    clearInputFields();
     toggleDisplays(welcomeScreen, playScreen);
     displayPlayerNames();
     updatePlayScreen();
   }
 
   function openPlayerMode(event) {
+    // clear input fields on navigation
+    // to player mode display
+    clearInputFields();
     toggleDisplays(playerSettingsDiv, playerModeDiv);
+
   } 
 
   function closeResultModal(event) {
