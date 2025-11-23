@@ -1,6 +1,7 @@
-# Tic-Tac-Toe
-> [!PRECAUTION]
-> Game version 1 still under development.
+<div align=center>⭕❌ </div>
+<h1 align=center>Tic-Tac-Toe</h1>
+<div aligh=center><img src="review-snap.png" alt="review snap"></div>
+
 
 ### [Click for Live Preview](https://ssekyene.github.io/Tic-Tac-Toe)
 
@@ -14,5 +15,10 @@
 
 ## Features
 - Two Player versus game mode
+- Solo Player mode (Computer Vs Human)
 - Game score track
 - First player swap
+
+## Motivation
+
+The project motive was to apply modular programming specifically using js closures to build a basic game with minimal complexity.
