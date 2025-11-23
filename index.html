@@ -11,7 +11,7 @@
 
         <div class="ctn welcome-ctn">
             <h1>Tic Tac Toe</h1>
-            <div class="player-mode hidden">
+            <div class="player-mode">
                 <button id="solo-player" class="player-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Solo</title><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>
                     Play Solo
@@ -22,8 +22,8 @@
                 </button>
             </div>
 
-            <div class="player-settings">
-                <section class="name-inputs hidden" id="friend-player-mode">
+            <div class="player-settings hidden">
+                <section class="name-inputs" id="friend-player-settings">
                     <div class="player-name player-x-name">
                         <label for="player-x-input" class="x-color">X</label>
                         <input type="text" id="player-x-input" placeholder="Player1 Name" maxlength="14" spellcheck="false">
@@ -34,21 +34,19 @@
                     </div>
                 </section>
 
-                <section id="solo-player-mode" class="solo-player-mode">
+                <section class="solo-player-mode" id="solo-player-settings">
                     <p class="level-select-label" role="label">Select Computer Player:</p>
-                    <form action="" class="form-levels">
-                        <select name="levels" id="" class="levels">
-                            <option value="junior">Junior</option>
-                            <option value="senior">Senior</option>
-                        </select>
-                    </form>
+                    <select name="levels" id="computer-level" class="levels">
+                        <option value="junior">Junior</option>
+                        <option value="senior">Senior</option>
+                    </select>
                     <p>Choose token:</p>
                     <div class="player-token">
-                        <button class="btn-token btn-x btn-selected">X</button>
-                        <button class="btn-token btn-o">O</button>
+                        <button class="btn-token btn-x btn-selected" id="x-token" data-token="x">X</button>
+                        <button class="btn-token btn-o" id="o-token" data-token="o">O</button>
                     </div>
                     <div class="solo-player player-name">
-                        <input type="text" id="player-name" placeholder="Enter your Name" maxlength="14" spellcheck="false">
+                        <input type="text" id="player-name-input" placeholder="Enter your Name" maxlength="14" spellcheck="false">
                     </div>
                 </section>
 

@@ -78,9 +78,7 @@ const Player = (name, token, score = 0, isComputer = false)  => {
  */
 const GameController = function () {
   const gameBoard = GameBoard();
-  const player1 = Player('Player1', 'X');
-  const player2 = Player('Player2', 'O');
-  const players = [player1, player2];
+  const players = [Player('Player1', 'X'), Player('Player2', 'O')];
   let currentPlayerIndex = 0;
   let isRoundOver = false;
   let isDraw = false;
@@ -132,8 +130,11 @@ const GameController = function () {
       players[currentPlayerIndex].score += 1;
   }
 
-  function resetScores() {
-    players.forEach((player) => {player.score = 0});
+  function resetPlayers() {
+    players.forEach((player) => {
+      player.score = 0;
+      player.isComputer = false;
+    });
   }
 
   function juniorComputerMoves(emptyPositions) {
@@ -190,6 +191,45 @@ const GameController = function () {
       play: computerMove,
       setJunior() {compPlayerLevel = "junior"},
       setSenior() {compPlayerLevel = "senior"}
+    }
+  }
+
+  // timer id used to allow cancelling a scheduled computer move
+  let _computerTimeoutId = null;
+
+  // Schedule the computer move with a human-like delay and optional jitter.
+  // Returns the delay in ms used (useful for UI indicators).
+  function scheduleComputerMove() {
+    // ensure any previous scheduled move is cleared
+    if (_computerTimeoutId) {
+      clearTimeout(_computerTimeoutId);
+      _computerTimeoutId = null;
+    }
+
+    const level = getCompPlayerLevel();
+    const base = level === 'senior' ? 700 : 420; // ms
+    const jitter = Math.floor(Math.random() * 480); // up to ~480ms random
+    const delay = base + jitter;
+
+    _computerTimeoutId = setTimeout(() => {
+      _computerTimeoutId = null;
+      // perform the move
+      computerMove();
+      // notify the app that the computer finished its move so UI can update
+      try {
+        document.dispatchEvent(new CustomEvent('computer:move-complete'));
+      } catch (e) {
+        // ignore if dispatching fails in some environment
+      }
+    }, delay);
+
+    return delay;
+  }
+
+  function cancelScheduledComputerMove() {
+    if (_computerTimeoutId) {
+      clearTimeout(_computerTimeoutId);
+      _computerTimeoutId = null;
     }
   }
 
@@ -269,9 +309,9 @@ const GameController = function () {
 
           switchPlayer();
 
-          if (getCurrentPlayer().isComputer) {
-            computerMove();
-          }
+          // Do not run the computer move synchronously here. Screen controller
+          // will detect when it's the computer's turn and call
+          // `scheduleComputerMove()` so we can show a 'thinking' UI.
 
       } else {
           console.log("Cell already occupied! Choose another cell.");
@@ -294,8 +334,10 @@ const GameController = function () {
       getIsDraw,
       switchPlayer,
       resetBoard,
-      resetScores,
+      resetPlayers,
       computer,
+      scheduleComputerMove,
+      cancelScheduledComputerMove,
       getBoard : gameBoard.getBoard,
       printBoard : gameBoard.printBoard,
   };
@@ -312,6 +354,7 @@ const screenController = function () {
   const resetBtn = document.querySelector('#restart');
   const swapFirstPlayerBtn = document.querySelector('#swap');
   const freindPlayersBtn = document.querySelector('#friend-players');
+  const soloPlayerBtn = document.querySelector('#solo-player');
   const playerModeDiv = document.querySelector('.player-mode');
   const playerSettingsDiv = document.querySelector('.player-settings');
   const startBtn = document.querySelector('.start-btn');
@@ -320,6 +363,12 @@ const screenController = function () {
   const welcomeScreen = document.querySelector('.welcome-screen');
   const playScreen = document.querySelector('.play-screen');
   const resModal = document.querySelector('.result-modal');
+  const soloPlayerSettings = document.querySelector('#solo-player-settings');
+  const friendPlayerSettings = document.querySelector('#friend-player-settings');
+  const computerLevelSelect = document.querySelector('#computer-level');
+  const xTokenBtn = document.querySelector('#x-token');
+  const oTokenBtn = document.querySelector('#o-token');
+  const playerNameInput = document.querySelector('#player-name-input');
   
 
   function init() {
@@ -327,12 +376,39 @@ const screenController = function () {
   }
 
   function getPlayerNames () {
-    const xInput = document.querySelector("#player-x-input");
-    const oInput = document.querySelector("#player-o-input");
-    game.setPlayerNames(xInput.value, oInput.value);
-    // clear input fields
-    xInput.value = '';
-    oInput.value = '';
+    let xName, oName;
+    const players = game.getPlayers();
+    // for human vs computer
+    if (players[0].isComputer || players[1].isComputer) {
+      const humanName = playerNameInput.value || 'Human';
+      // clear the input field after use
+      playerNameInput.value = '';
+      if (players[0].isComputer) {
+        xName = 'Bot';
+        oName = humanName;
+      } else {
+        xName = humanName;
+        oName = 'Bot';
+      }
+      // set computer player level
+      const level = computerLevelSelect.value;
+      if (level == 'junior') {
+        game.computer().setJunior();
+      } else if (level == 'senior') {
+        game.computer().setSenior();
+      }
+    
+    } else {
+      const xInput = document.querySelector("#player-x-input");
+      const oInput = document.querySelector("#player-o-input");
+      xName = xInput.value;
+      oName = oInput.value;
+      // clear input fields
+      xInput.value = '';
+      oInput.value = '';
+    }
+    
+    game.setPlayerNames(xName, oName);
 
   }
 
@@ -366,6 +442,8 @@ const screenController = function () {
   }
 
   function updatePlayScreen() {
+    // remove any thinking indicator (we'll re-add below if needed)
+    boardDiv.classList.remove('thinking');
     // update scores
     document.querySelector('.x-score').textContent = game.getPlayers()[0].score;
     document.querySelector('.o-score').textContent = game.getPlayers()[1].score;
@@ -395,7 +473,21 @@ const screenController = function () {
 
     // render the updated board
     renderBoard(board);
-    boardDiv.addEventListener('click', handleCellClick);
+
+    // make sure clicks are not registered multiple times
+    boardDiv.removeEventListener('click', handleCellClick);
+
+    // If it's the computer's turn, show thinking indicator and schedule the move.
+    if (currentPlayer.isComputer && !game.getisRoundOver()) {
+      boardDiv.classList.add('thinking');
+      // disable human clicking while computer thinks
+      // schedule the computer move and let the 'computer:move-complete' event
+      // notify the UI when it finishes.
+      game.scheduleComputerMove();
+    } else if (!currentPlayer.isComputer) {
+      // allow human clicks
+      boardDiv.addEventListener('click', handleCellClick);
+    }
   }
   
   // register all event handlers
@@ -403,11 +495,37 @@ const screenController = function () {
     resetBtn.addEventListener('click', resetBoard);
     swapFirstPlayerBtn.addEventListener('click', swapFirstPlayer);
     quitBtn.addEventListener('click', quitGame);
-    freindPlayersBtn.addEventListener('click', openPlayerSettings);
+    freindPlayersBtn.addEventListener('click', openFriendPlayerSettings);
+    soloPlayerBtn.addEventListener('click', openSoloPlayerSettings);
     startBtn.addEventListener('click', startGame);
     backBtn.addEventListener('click', openPlayerMode);
     resModal.querySelector('.close').addEventListener('click', closeResultModal);
+    // listen for computer move completion so UI can update and show results if needed
+    document.addEventListener('computer:move-complete', proceedAfterComputerMove);
+    xTokenBtn.addEventListener('click', selectToken);
+    oTokenBtn.addEventListener('click', selectToken);
   }
+
+  function proceedAfterComputerMove(event) {
+    updatePlayScreen();
+    examineRound();
+  }
+
+  function selectToken(event) {
+    if (event.target.dataset.token === 'x') {
+      xTokenBtn.classList.add('btn-selected');
+      oTokenBtn.classList.remove('btn-selected');
+
+      game.getPlayers()[0].isComputer = false; // x player === human
+      game.getPlayers()[1].isComputer = true; // o player === computer
+    } else {
+      xTokenBtn.classList.remove('btn-selected');
+      oTokenBtn.classList.add('btn-selected');
+
+      game.getPlayers()[0].isComputer = true; // x player === computer
+      game.getPlayers()[1].isComputer = false; // o player === human
+    }
+  } 
 
   // add click listeners to the cells
   function handleCellClick(event) {
@@ -417,7 +535,12 @@ const screenController = function () {
       const col = parseInt(target.dataset.col, 10);
       game.playRound(row, col);
       updatePlayScreen();
-      if (game.getisRoundOver()) {
+      examineRound();
+    }
+  }
+
+  function examineRound() {
+    if (game.getisRoundOver()) {
         boardDiv.removeEventListener('click', handleCellClick);
         resModal.showModal();
         const resultDiv = resModal.querySelector('.results');
@@ -427,7 +550,6 @@ const screenController = function () {
           resultDiv.textContent = `${game.getCurrentPlayer().name} wins!`
         }
       } 
-    }
   }
 
   function resetBoard(event) {
@@ -442,34 +564,42 @@ const screenController = function () {
   }
 
   function displayPlayerModeDiv() {
-    changeDisplays(playScreen, welcomeScreen);
-    changeDisplays(playerSettingsDiv, playerModeDiv);
+    toggleDisplays(playScreen, welcomeScreen);
+    toggleDisplays(playerSettingsDiv, playerModeDiv);
   }
 
   function quitGame(event) {
     game.resetBoard();
-    game.resetScores();
+    game.resetPlayers();
     displayPlayerModeDiv();
   }
 
-  function changeDisplays(fromDisplay, toDisplay) {
+  function toggleDisplays(fromDisplay, toDisplay) {
     fromDisplay.classList.add('hidden')
     toDisplay.classList.remove('hidden');
   }
 
-  function openPlayerSettings(event) {
-    changeDisplays(playerModeDiv, playerSettingsDiv);
+  function openFriendPlayerSettings(event) {
+    toggleDisplays(playerModeDiv, playerSettingsDiv);
+    toggleDisplays(soloPlayerSettings, friendPlayerSettings);
+  }
+
+  function openSoloPlayerSettings(event) {
+    toggleDisplays(playerModeDiv, playerSettingsDiv);
+    toggleDisplays(friendPlayerSettings, soloPlayerSettings);
+    // set the second player to be a computer by default
+    game.getPlayers()[1].isComputer = true;
   }
 
   function startGame(event) {
     getPlayerNames();
-    changeDisplays(welcomeScreen, playScreen);
+    toggleDisplays(welcomeScreen, playScreen);
     displayPlayerNames();
     updatePlayScreen();
   }
 
   function openPlayerMode(event) {
-    changeDisplays(playerSettingsDiv, playerModeDiv);
+    toggleDisplays(playerSettingsDiv, playerModeDiv);
   } 
 
   function closeResultModal(event) {
